@@ -1,0 +1,140 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a solo admin.",
+        "title": "SoLo Admin",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/status": {
+            "get": {
+                "description": "Checks status",
+                "summary": "Checks if server is running",
+                "responses": {
+                    "200": {
+                        "description": "Status is OK, everything works!",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/authenticate/google": {
+            "post": {
+                "description": "Login using google.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Login using google oauth. Exchange code for token",
+                "parameters": [
+                    {
+                        "description": "Send Auth code",
+                        "name": "auth_code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/google.VerificationError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/logout": {
+            "get": {
+                "description": "Cookie is set to expired.",
+                "summary": "Logout logouts user.",
+                "responses": {
+                    "204": {
+                        "description": "user has been logged out successfuly",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AuthRequest": {
+            "type": "object",
+            "properties": {
+                "auth_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "picture": {
+                    "type": "string"
+                }
+            }
+        },
+        "google.VerificationError": {
+            "type": "object"
+        },
+        "server.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Unique application error code.",
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

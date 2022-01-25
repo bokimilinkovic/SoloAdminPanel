@@ -1,0 +1,92 @@
+basePath: /
+definitions:
+  dto.AuthRequest:
+    properties:
+      auth_code:
+        type: string
+    type: object
+  dto.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      picture:
+        type: string
+    type: object
+  google.VerificationError:
+    type: object
+  server.HTTPError:
+    properties:
+      code:
+        description: Unique application error code.
+        type: integer
+      details:
+        type: object
+      message:
+        type: string
+      request_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a solo admin.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: SoLo Admin
+  version: "1.0"
+paths:
+  /status:
+    get:
+      description: Checks status
+      responses:
+        "200":
+          description: Status is OK, everything works!
+          schema:
+            type: string
+      summary: Checks if server is running
+  /v1/authenticate/google:
+    post:
+      consumes:
+      - application/json
+      description: Login using google.
+      parameters:
+      - description: Send Auth code
+        in: body
+        name: auth_code
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/google.VerificationError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Login using google oauth. Exchange code for token
+  /v1/logout:
+    get:
+      description: Cookie is set to expired.
+      responses:
+        "204":
+          description: user has been logged out successfuly
+          schema:
+            type: string
+      summary: Logout logouts user.
+swagger: "2.0"
